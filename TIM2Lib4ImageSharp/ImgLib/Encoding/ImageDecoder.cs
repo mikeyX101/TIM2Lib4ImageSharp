@@ -19,14 +19,15 @@ namespace TIM2Lib4ImageSharp.ImgLib.Encoding
 {
 
     /// <summary>
-    /// This interface represents an object that can convert its internal image data into the given stream, following the encoding implemented by this object.
+    /// This interface represents an object that can convert its internal image data encoded with the encoding represented by this object, into an Image object.
     /// </summary>
-    public interface ImageEncoder<TPixel> where TPixel : unmanaged, IPixel<TPixel>
+    public interface ImageDecoder<TPixel> where TPixel : unmanaged, IPixel<TPixel>
     {
         /// <summary>
-        /// Encodes the image associated to this ImageEncoder.
+        /// Constructs an Image object associated to this ImageEncoder. If either the witdh or the height of the image
+        /// is zero, null is returned.
         /// </summary>
-        /// <param name="s"></param>
-        byte[]? Encode();
+        /// <returns></returns>
+        Image<TPixel>? DecodeImage();
     }
 }

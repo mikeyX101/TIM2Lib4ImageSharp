@@ -15,18 +15,19 @@
 //Official repository and contact information can be found at
 //http://github.com/marco-calautti/Rainbow
 
-namespace TIM2Lib4ImageSharp.ImgLib.Encoding
+namespace TIM2Lib4ImageSharp.ImgLib.Encoding.ColorComparers
 {
-
-    /// <summary>
-    /// This interface represents an object that can convert its internal image data into the given stream, following the encoding implemented by this object.
-    /// </summary>
-    public interface ImageEncoder<TPixel> where TPixel : unmanaged, IPixel<TPixel>
+    public class ARGBColorComparer<TPixel> : IComparer<TPixel> where TPixel : unmanaged, IPixel<TPixel>
     {
-        /// <summary>
-        /// Encodes the image associated to this ImageEncoder.
-        /// </summary>
-        /// <param name="s"></param>
-        byte[]? Encode();
+        public int Compare(TPixel x, TPixel y)
+        {
+            Rgba32 xVal = Color.FromPixel(x).ToPixel<Rgba32>();
+            Rgba32 yVal = Color.FromPixel(y).ToPixel<Rgba32>();
+            
+            long c1 = (uint)(xVal.A << 24 | xVal.B << 16 | xVal.G << 8 | xVal.R);
+            long c2 = (uint)(yVal.A << 24 | yVal.B << 16 | yVal.G << 8 | yVal.R);
+            long result = c1 - c2;
+            return result < 0 ? -1 : result > 0 ? 1 : 0;
+        }
     }
 }

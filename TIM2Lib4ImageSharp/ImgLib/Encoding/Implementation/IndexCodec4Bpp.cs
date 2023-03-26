@@ -15,21 +15,14 @@
 //Official repository and contact information can be found at
 //http://github.com/marco-calautti/Rainbow
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Rainbow.ImgLib.Common;
-
-namespace Rainbow.ImgLib.Encoding.Implementation
+namespace TIM2Lib4ImageSharp.ImgLib.Encoding.Implementation
 {
     public class IndexCodec4Bpp : IndexCodecEndiannessDependent
     {
         public IndexCodec4Bpp(ByteOrder order):
             base(order) { }
 
-        public override int GetPixelIndex(byte[] pixelData, int width, int height, int x, int y)
+        public override int GetPixelIndex(byte[]? pixelData, int width, int height, int x, int y)
         {
             int pos = x + y * width;
             byte b = pixelData[pos / 2];
@@ -44,12 +37,12 @@ namespace Rainbow.ImgLib.Encoding.Implementation
             }
         }
 
-        public override byte[] PackIndexes(int[] indexes, int start, int length)
+        public override byte[]? PackIndexes(int[] indexes, int start, int length)
         {
             if (length % 2 != 0)
                 throw new ArgumentException("Number of indexes must be odd!");
 
-            byte[] packed = new byte[length / 2];
+            byte[]? packed = new byte[length / 2];
             int k = 0;
             for (int i = start; i < length; i += 2)
             {

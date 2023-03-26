@@ -15,18 +15,36 @@
 //Official repository and contact information can be found at
 //http://github.com/marco-calautti/Rainbow
 
-namespace TIM2Lib4ImageSharp.ImgLib.Encoding
+namespace TIM2Lib4ImageSharp.ImgLib.Common
 {
-
-    /// <summary>
-    /// This interface represents an object that can convert its internal image data into the given stream, following the encoding implemented by this object.
-    /// </summary>
-    public interface ImageEncoder<TPixel> where TPixel : unmanaged, IPixel<TPixel>
+    public class GenericDictionary
     {
+        private readonly IDictionary<string, object> dict=new Dictionary<string,object>();
+
         /// <summary>
-        /// Encodes the image associated to this ImageEncoder.
+        /// String representation of value with key "key".
         /// </summary>
-        /// <param name="s"></param>
-        byte[]? Encode();
+        /// <param name="key"></param>
+        /// <returns></returns>
+        public string Get(string key)
+        {
+            return Get<object>(key).ToString();
+        }
+
+        public T Get<T>(string key)
+        {
+            return (T)dict[key];
+        }
+
+        public GenericDictionary Put<T>(string key, T value)
+        {
+            dict[key] = value;
+            return this;
+        }
+
+        public ICollection<string> Keys
+        {
+            get { return dict.Keys; }
+        }
     }
 }

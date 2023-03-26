@@ -4,7 +4,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>Tim2Lib</RootNamespace>
+        <RootNamespace>TIM2Lib4ImageSharp</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

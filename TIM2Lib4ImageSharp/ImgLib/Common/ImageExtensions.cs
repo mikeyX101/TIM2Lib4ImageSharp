@@ -15,18 +15,24 @@
 //Official repository and contact information can be found at
 //http://github.com/marco-calautti/Rainbow
 
-namespace TIM2Lib4ImageSharp.ImgLib.Encoding
-{
 
-    /// <summary>
-    /// This interface represents an object that can convert its internal image data into the given stream, following the encoding implemented by this object.
-    /// </summary>
-    public interface ImageEncoder<TPixel> where TPixel : unmanaged, IPixel<TPixel>
+
+namespace TIM2Lib4ImageSharp.ImgLib.Common
+{
+    public static class ImageExtensions
     {
-        /// <summary>
-        /// Encodes the image associated to this ImageEncoder.
-        /// </summary>
-        /// <param name="s"></param>
-        byte[]? Encode();
+        public static TPixel[] GetColorArray<TPixel>(this Image<TPixel> img) where TPixel : unmanaged, IPixel<TPixel>
+        {
+            TPixel[] pixels = new TPixel[img.Width * img.Height];
+            img.CopyPixelDataTo(pixels.AsSpan());
+            return pixels;
+        }
+
+        public static int ColorsCount<TPixel>(this Image<TPixel> img) where TPixel : unmanaged, IPixel<TPixel>
+        {
+            TPixel[] pixels = new TPixel[img.Width * img.Height];
+            img.CopyPixelDataTo(pixels.AsSpan());
+            return pixels.Select(p => p.ToVector4()).ToHashSet().Count;
+        }
     }
 }

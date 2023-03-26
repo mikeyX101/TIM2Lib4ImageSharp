@@ -15,18 +15,14 @@
 //Official repository and contact information can be found at
 //http://github.com/marco-calautti/Rainbow
 
-namespace TIM2Lib4ImageSharp.ImgLib.Encoding
+namespace TIM2Lib4ImageSharp.ImgLib.Filters
 {
-
-    /// <summary>
-    /// This interface represents an object that can convert its internal image data into the given stream, following the encoding implemented by this object.
-    /// </summary>
-    public interface ImageEncoder<TPixel> where TPixel : unmanaged, IPixel<TPixel>
+    public class SwizzleFilter : TileFilter
     {
-        /// <summary>
-        /// Encodes the image associated to this ImageEncoder.
-        /// </summary>
-        /// <param name="s"></param>
-        byte[]? Encode();
+        public SwizzleFilter(int width,int height,int bitDepth):
+            base(bitDepth,16,8,width,height)
+        {
+            TileDimensionsAsBytes = true;
+        }
     }
 }

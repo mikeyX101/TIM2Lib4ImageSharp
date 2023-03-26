@@ -1,8 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RainbowLib", "RainbowLib\RainbowLib.csproj", "{B9FEAE21-B5D2-415C-B968-169BC6F9B5A4}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TIM2Lib4ImageSharp", "TIM2Lib4ImageSharp\TIM2Lib4ImageSharp.csproj", "{B0DFCA2F-129E-40D4-B698-4E1DB40C3B07}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TIM2Lib4ImageSharpRunTest", "TIM2Lib4ImageSharpRunTest\TIM2Lib4ImageSharpRunTest.csproj", "{60D1C549-3C8F-4D30-8FEE-58DEB6E009A6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -10,13 +10,13 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B9FEAE21-B5D2-415C-B968-169BC6F9B5A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B9FEAE21-B5D2-415C-B968-169BC6F9B5A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B9FEAE21-B5D2-415C-B968-169BC6F9B5A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B9FEAE21-B5D2-415C-B968-169BC6F9B5A4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{B0DFCA2F-129E-40D4-B698-4E1DB40C3B07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B0DFCA2F-129E-40D4-B698-4E1DB40C3B07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0DFCA2F-129E-40D4-B698-4E1DB40C3B07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0DFCA2F-129E-40D4-B698-4E1DB40C3B07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{60D1C549-3C8F-4D30-8FEE-58DEB6E009A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{60D1C549-3C8F-4D30-8FEE-58DEB6E009A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{60D1C549-3C8F-4D30-8FEE-58DEB6E009A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{60D1C549-3C8F-4D30-8FEE-58DEB6E009A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

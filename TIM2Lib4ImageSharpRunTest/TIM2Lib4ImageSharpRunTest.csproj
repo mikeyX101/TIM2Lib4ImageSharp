@@ -1,14 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
+        <OutputType>Exe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>TM2Lib</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="SixLabors.ImageSharp" Version="3.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\TIM2Lib4ImageSharp\TIM2Lib4ImageSharp.csproj" />
     </ItemGroup>
 
 </Project>

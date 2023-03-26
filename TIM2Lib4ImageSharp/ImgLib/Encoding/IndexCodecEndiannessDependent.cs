@@ -15,18 +15,19 @@
 //Official repository and contact information can be found at
 //http://github.com/marco-calautti/Rainbow
 
+using TIM2Lib4ImageSharp.ImgLib.Common;
+
 namespace TIM2Lib4ImageSharp.ImgLib.Encoding
 {
-
-    /// <summary>
-    /// This interface represents an object that can convert its internal image data into the given stream, following the encoding implemented by this object.
-    /// </summary>
-    public interface ImageEncoder<TPixel> where TPixel : unmanaged, IPixel<TPixel>
+    public abstract class IndexCodecEndiannessDependent : IndexCodec, EndiannessDependent
     {
-        /// <summary>
-        /// Encodes the image associated to this ImageEncoder.
-        /// </summary>
-        /// <param name="s"></param>
-        byte[]? Encode();
+        private readonly ByteOrder order;
+        public IndexCodecEndiannessDependent(ByteOrder order)
+        {
+            this.order = order;
+        }
+
+
+        public ByteOrder ByteOrder => order;
     }
 }

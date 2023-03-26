@@ -1,6 +1,6 @@
-namespace Tim2Lib;
+namespace TIM2Lib4ImageSharp;
 
-internal static class Tim2Constants
+internal static class TIM2Constants
 {
     /// <summary>
     /// The list of mimetypes that equate to a Tim2.
@@ -11,6 +11,8 @@ internal static class Tim2Constants
     /// The list of file extensions that equate to a Tim2.
     /// </summary>
     public static readonly IEnumerable<string> FileExtensions = new[] { "tm2" };
+    
+    public static ulong HeaderValue => 0x54494D3204000100;
     
     /// <summary>
     /// Gets the header bytes identifying a Tim2.

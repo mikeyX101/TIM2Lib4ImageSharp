@@ -15,30 +15,27 @@
 //Official repository and contact information can be found at
 //http://github.com/marco-calautti/Rainbow
 
-using System;
-using System.Drawing;
+using TIM2Lib4ImageSharp.ImgLib.Common;
+using TIM2Lib4ImageSharp.ImgLib.Filters;
 
-using Rainbow.ImgLib.Common;
-using Rainbow.ImgLib.Filters;
-
-namespace Rainbow.ImgLib.Encoding
+namespace TIM2Lib4ImageSharp.ImgLib.Encoding
 {
-    public class ImageEncoderDirectColor : ImageEncoder
+    public class ImageEncoderDirectColor<TPixel> : ImageEncoder<TPixel> where TPixel : unmanaged, IPixel<TPixel>
     {
-        private Image image;
-        private ImageFilter filter;
-        private ColorCodec codec;
+        private Image<TPixel> image;
+        private ImageFilter? filter;
+        private ColorCodec<TPixel> codec;
 
-        public ImageEncoderDirectColor(Image image, ColorCodec codec, ImageFilter filter=null)
+        public ImageEncoderDirectColor(Image<TPixel> image, ColorCodec<TPixel> codec, ImageFilter? filter = null)
         {
             this.image = image;
             this.codec = codec;
             this.filter = filter;
         }
 
-        public byte[] Encode()
+        public byte[]? Encode()
         {
-            byte[] data = codec.EncodeColors(image.GetColorArray());
+            byte[]? data = codec.EncodeColors(image.GetColorArray());
 
             if (filter != null)
             {

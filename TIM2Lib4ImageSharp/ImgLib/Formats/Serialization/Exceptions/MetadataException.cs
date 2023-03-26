@@ -15,18 +15,12 @@
 //Official repository and contact information can be found at
 //http://github.com/marco-calautti/Rainbow
 
-namespace TIM2Lib4ImageSharp.ImgLib.Encoding
+namespace TIM2Lib4ImageSharp.ImgLib.Formats.Serialization.Exceptions
 {
-
-    /// <summary>
-    /// This interface represents an object that can convert its internal image data into the given stream, following the encoding implemented by this object.
-    /// </summary>
-    public interface ImageEncoder<TPixel> where TPixel : unmanaged, IPixel<TPixel>
+    public class MetadataException : Exception
     {
-        /// <summary>
-        /// Encodes the image associated to this ImageEncoder.
-        /// </summary>
-        /// <param name="s"></param>
-        byte[]? Encode();
+        public MetadataException() { }
+        public MetadataException(string message) : base(message) { }
+        public MetadataException(string message, Exception inner) : base(message, inner) { }
     }
 }

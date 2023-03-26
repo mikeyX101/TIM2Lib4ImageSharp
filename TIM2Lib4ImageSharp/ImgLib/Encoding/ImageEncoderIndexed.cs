@@ -15,42 +15,41 @@
 //Official repository and contact information can be found at
 //http://github.com/marco-calautti/Rainbow
 
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using Rainbow.ImgLib.Common;
-using Rainbow.ImgLib.Filters;
+using SixLabors.ImageSharp.Processing.Processors.Quantization;
+using TIM2Lib4ImageSharp.ImgLib.Common;
+using TIM2Lib4ImageSharp.ImgLib.Filters;
+using Color = SixLabors.ImageSharp.Color;
 
-
-namespace Rainbow.ImgLib.Encoding
+namespace TIM2Lib4ImageSharp.ImgLib.Encoding
 {
-    public class ImageEncoderIndexed : ImageEncoder
+    public class ImageEncoderIndexed<TPixel> : ImageEncoder<TPixel> where TPixel : unmanaged, IPixel<TPixel>
     {
-        private class DefaultColorSorter : IComparer<Color>
+        private class DefaultColorSorter : IComparer<TPixel>
         {
-            public int Compare(Color x, Color y)
+            public int Compare(TPixel x, TPixel y)
             {
-                long result = (long)(uint)x.ToArgb() - (long)(uint)y.ToArgb();
+                Rgba32 xVal = Color.FromPixel(x).ToPixel<Rgba32>();
+                Rgba32 yVal = Color.FromPixel(y).ToPixel<Rgba32>();
+                long result = (long)xVal.PackedValue - (long)yVal.PackedValue;
                 return result < 0 ? -1 : result > 0 ? 1 : 0;
             }
         }
 
-        private IList<Image> images;
-        private Image referenceImage;
+        private IList<Image<TPixel>> images;
+        private Image<TPixel> referenceImage;
 
         private int colors;
         private int width, height;
-        private IndexCodec codec;
-        private IComparer<Color> pixelSorter=new DefaultColorSorter();
-        private ColorCodec colorEncoder;
-        private ImageFilter imageFilter;
-        private PaletteFilter paletteFilter;
+        private IndexCodec? codec;
+        private IComparer<TPixel> pixelSorter = new DefaultColorSorter();
+        private ColorCodec<TPixel>? colorEncoder;
+        private ImageFilter? imageFilter;
+        private PaletteFilter<TPixel>? paletteFilter;
 
         private bool fromReference;
 
-        public ImageEncoderIndexed(IList<Color[]> palettes, Image referenceImage, IndexCodec codec, ColorCodec encoder = null, ImageFilter imageFilter = null, PaletteFilter paletteFilter = null)
+        public ImageEncoderIndexed(IList<TPixel[]?> palettes, Image<TPixel> referenceImage, IndexCodec codec, ColorCodec<TPixel>? encoder = null, ImageFilter? imageFilter = null, PaletteFilter<TPixel>? paletteFilter = null)
         {
             fromReference = true;
             Palettes = palettes;
@@ -69,14 +68,14 @@ namespace Rainbow.ImgLib.Encoding
 
         }
 
-        public ImageEncoderIndexed(Image image, IndexCodec codec, IComparer<Color> pixelComparer = null, ColorCodec encoder = null, ImageFilter imageFilter = null, PaletteFilter paletteFilter = null)
-        : this(new List<Image>() { image}, codec,pixelComparer, encoder, imageFilter,paletteFilter)
+        public ImageEncoderIndexed(Image<TPixel> image, IndexCodec codec, IComparer<TPixel>? pixelComparer = null, ColorCodec<TPixel>? encoder = null, ImageFilter? imageFilter = null, PaletteFilter<TPixel>? paletteFilter = null)
+        : this(new List<Image<TPixel>>() { image}, codec,pixelComparer, encoder, imageFilter,paletteFilter)
         {
 
         }
 
 
-        private ImageEncoderIndexed(IList<Image> images, IndexCodec codec, IComparer<Color> pixelComparer = null, ColorCodec encoder = null, ImageFilter imageFilter = null, PaletteFilter paletteFilter = null)
+        private ImageEncoderIndexed(IList<Image<TPixel>> images, IndexCodec codec, IComparer<TPixel>? pixelComparer = null, ColorCodec<TPixel>? encoder = null, ImageFilter? imageFilter = null, PaletteFilter<TPixel>? paletteFilter = null)
         {
             fromReference = false;
 
@@ -101,7 +100,7 @@ namespace Rainbow.ImgLib.Encoding
             Init(codec,pixelComparer,encoder,imageFilter,paletteFilter);
         }
 
-        private void Init(IndexCodec codec, IComparer<Color> pixelComparer, ColorCodec encoder, ImageFilter imageFilter, PaletteFilter paletteFilter)
+        private void Init(IndexCodec? codec, IComparer<TPixel>? pixelComparer, ColorCodec<TPixel>? encoder, ImageFilter? imageFilter, PaletteFilter<TPixel>? paletteFilter)
         {
             this.codec = codec;
             this.colorEncoder = encoder;
@@ -116,33 +115,42 @@ namespace Rainbow.ImgLib.Encoding
             }
         }
 
-        private bool IsGreyScale(Image referenceImage)
+        private bool IsGreyScale(Image<TPixel> referenceImage)
         {
-            return referenceImage.GetColorArray().All((c) => c.R == c.G && c.R == c.B);
+            return referenceImage.GetColorArray().All(p =>
+            {
+                Rgba32 rgba = Color.FromPixel(p).ToPixel<Rgba32>();
+                return rgba.R == rgba.G && rgba.R == rgba.B;
+            });
         }
 
-        public IList<Color[]> Palettes { get; private set; }
-        public IList<byte[]> EncodedPalettes { get; private set; }
+        public IList<TPixel[]?> Palettes { get; private set; }
+        public IList<byte[]?> EncodedPalettes { get; private set; }
 
-        public byte[] Encode()
+        public byte[]? Encode()
         {
-            if(fromReference)
+            if (fromReference)
             {
                 return EncodeFromReference();
-            }else
+            }
+            else
             {
                 return EncodeFromImages();
             }
         }
 
-        private byte[] EncodeFromReference()
+        private byte[]? EncodeFromReference()
         {
-            int[] indexes = referenceImage.GetColorArray().Select((c) => (c.R >> (8 - codec.BitDepth))).ToArray();
+            int[] indexes = referenceImage.GetColorArray().Select(p =>
+            {
+                Rgba32 rgba = Color.FromPixel(p).ToPixel<Rgba32>();
+                return (rgba.R >> (8 - codec.BitDepth));
+            }).ToArray();
 
             if (colorEncoder != null)
             {
-                EncodedPalettes = new List<byte[]>(Palettes.Count);
-                foreach (Color[] pal in Palettes)
+                EncodedPalettes = new List<byte[]?>(Palettes.Count);
+                foreach (TPixel[]? pal in Palettes)
                 {
                     EncodedPalettes.Add(colorEncoder.EncodeColors(paletteFilter == null ? pal : paletteFilter.ApplyFilter(pal)));
                 }
@@ -150,44 +158,42 @@ namespace Rainbow.ImgLib.Encoding
             return imageFilter == null ? codec.PackIndexes(indexes) : imageFilter.ApplyFilter(codec.PackIndexes(indexes));
         }
 
-        private byte[] EncodeFromImages()
+        private byte[]? EncodeFromImages()
         {
-            List<Bitmap> bitmaps = null;
+            IList<Image<TPixel>> bitmaps = null;
             if (images.Count == 1) // We can quantize a single palette image
             {
-                Image img = images.First();
+                Image<TPixel> img = images.First();
                 if (img.ColorsCount() > colors)
                 {
-                    nQuant.WuQuantizerBase quantizer = new nQuant.WuQuantizer(colors);
-                    img = quantizer.QuantizeImage(new Bitmap(img));
+                    img.Mutate(context => context.Quantize(new WuQuantizer(options: new QuantizerOptions { MaxColors = colors })));
                 }
-                bitmaps = new List<Bitmap>(); bitmaps.Add(new Bitmap(img));
-
+                bitmaps = new List<Image<TPixel>> { img };
             }
             else //for multi palette images, quantization may break the pixel structure of the images. We must trust the work of the graphics editor.
             {
-                bitmaps = new List<Image>(images).ConvertAll(x => new Bitmap(x));
+                bitmaps = images;
             }
 
             var indexes = new int[width * height];
 
 
-            Palettes = new List<Color[]>();
+            Palettes = new List<TPixel[]?>();
 
             for (int i = 0; i < bitmaps.Count; i++)
             {
-                Palettes.Add(Enumerable.Repeat<Color>(Color.Black, colors).ToArray());
+                Palettes.Add(Enumerable.Repeat(Color.Black, colors).Select(c => c.ToPixel<TPixel>()).ToArray());
             }
 
             for (int i = 0; i < bitmaps.Count; i++)
             {
                 int count = 0;
-                List<Color> palette = new List<Color>();
+                List<TPixel> palette = new List<TPixel>();
                 for (int y = 0; y < height; y++)
                 {
                     for (int x = 0; x < width; x++)
                     {
-                        Color pixel = bitmaps[i].GetPixel(x, y);
+                        TPixel pixel = bitmaps[i][x, y];
                         if (!palette.Contains(pixel))
                         {
                             if (count >= colors)
@@ -202,7 +208,7 @@ namespace Rainbow.ImgLib.Encoding
 
                 for (int c = 0; c < colors - count; c++)
                 {
-                    palette.Add(Color.Black);
+                    palette.Add(Color.Black.ToPixel<TPixel>());
                 }
 
                 palette.Sort(pixelSorter);
@@ -215,15 +221,15 @@ namespace Rainbow.ImgLib.Encoding
             {
                 for (int x = 0; x < width; x++)
                 {
-                    Color pixel = bitmaps[0].GetPixel(x, y);
+                    TPixel pixel = bitmaps[0][x, y];
                     int idx = Array.BinarySearch(Palettes[0], pixel, pixelSorter);
                     indexes[k++] = idx;
                 }
             }
             if (colorEncoder != null)
             {
-                EncodedPalettes = new List<byte[]>(Palettes.Count);
-                foreach (Color[] pal in Palettes)
+                EncodedPalettes = new List<byte[]?>(Palettes.Count);
+                foreach (TPixel[]? pal in Palettes)
                 {
                     EncodedPalettes.Add(colorEncoder.EncodeColors(paletteFilter == null ? pal : paletteFilter.ApplyFilter(pal)));
                 }
